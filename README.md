@@ -98,7 +98,7 @@ node type.
 ```js
 // gatsby-node.js
 
-import { ProductNode } from './nodes'
+import { ProductNode, ProductVariantNode } from './nodes'
 import { getAllProducts } from './api'
 
 exports.sourceNodes = async ({ boundActionCreators }) => {

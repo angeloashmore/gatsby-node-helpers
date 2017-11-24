@@ -70,7 +70,7 @@ and node type.
 // gatsby-node.js
 
 import { ProductNode } from './nodes'
-import { getAllDocuments } from './api'
+import { getAllProducts } from './api'
 
 exports.sourceNodes = async ({ boundActionCreators }) => {
   const { createNode } = boundActionCreators

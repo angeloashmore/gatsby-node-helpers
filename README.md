@@ -26,6 +26,8 @@ import createNodeHelpers from 'gatsby-node-helpers'
 
 ### Create node helpers
 
+Call `createNodeHelpers` with options.
+
 ```js
 import createNodeHelpers from 'gatsby-node-helpers'
 
@@ -40,6 +42,8 @@ const {
 
 ### Create a node factory
 
+Call `createNodeFactory` with a type name.
+
 ```js
 import createNodeHelpers from 'gatsby-node-helpers'
 
@@ -51,26 +55,30 @@ const {
   typePrefix: `Shopify`,
 })
 
-export const DocumentNode = createNodeFactory('DocumentNode')
+export const ProductNode = createNodeFactory(`Product`)
 ```
 
 ### Use the node factory in your `gatsby-node.js`
 
+`ProductNode` accepts an object and returns a new object to be passed to
+Gatsby's `createNode` action creator.
+
+It handles setting up Gatsby's internal fields, including the content digest
+and node types.
+
 ```js
 // gatsby-node.js
 
-import { DocumentNode } from './nodes'
+import { ProductNode } from './nodes'
 import { getAllDocuments } from './api'
-
-const documents = getAllDocuments()
 
 exports.sourceNodes = async ({ boundActionCreators }) => {
   const { createNode } = boundActionCreators
 
-  const documents = await getAllDocuments()
+  const products = await getAllProducts()
 
-  documents.forEach(document => {
-    const node = DocumentNode(document)
+  products.forEach(product => {
+    const node = ProductNode(product)
     createNode(node)
   })
 }

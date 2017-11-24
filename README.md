@@ -110,12 +110,13 @@ exports.sourceNodes = async ({ boundActionCreators }) => {
     const productNode = ProductNode(product)
     createNode(productNode)
 
-    product.variants.edges.forEach(
-      pipe(
-        edge => ProductVariantNode(edge.node, { parent: productNode.id }),
-        createNode,
-      ),
-    )
+    product.variants.edges.forEach(edge => {
+      const variant = edge.node
+      const productVariantNode = ProductVariantNode(variant, {
+        parent: productNode.id,
+      })
+      createNode(productVariantNode)
+    })
   })
 }
 ```

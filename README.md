@@ -79,3 +79,5 @@ exports.sourceNodes = async ({ boundActionCreators }) => {
 ## API
 
 Coming soon...
+
+[gatsby-source-plugins]: https://www.gatsbyjs.org/docs/create-source-plugin/

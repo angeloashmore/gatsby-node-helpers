@@ -1,0 +1,37 @@
+{
+  "name": "gatsby-node-factory",
+  "version": "0.1.0",
+  "description": "Gatsby node factory function to aid node creation.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "babel src --out-dir dist --ignore *.test.js",
+    "format": "prettier --write 'src/**/*.js'",
+    "prepublish": "npm run build",
+    "test": "jest",
+    "test:watch": "npm run test -- --watch",
+    "watch": "npm run build -- --watch"
+  },
+  "homepage": "https://github.com/angeloashmore/gatsby-node-factory",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/angeloashmore/gatsby-node-factory.git"
+  },
+  "keywords": [
+    "gatsby"
+  ],
+  "author": "Angelo Ashmore",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-rewire": "^1.1.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-plugin-transform-export-extensions": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "jest": "^21.2.1",
+    "prettier": "^1.8.2"
+  },
+  "dependencies": {
+    "json-stringify-safe": "^5.0.1",
+    "lodash": "^4.17.4"
+  }
+}

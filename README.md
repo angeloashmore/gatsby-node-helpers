@@ -99,9 +99,9 @@ exports.sourceNodes = async ({ boundActionCreators }) => {
   typePrefix: String,
   conflictFieldPrefix?: String
 }) => ({
-  createNodeFactory: (type: String, middleware?: Node => Node),
-  generateNodeId: (type: String, id: String),
-  generateTypeName: (type: String)
+  createNodeFactory: (type: String, middleware?: Node => Node) => (obj: Object, overrides?: Object),
+  generateNodeId: (type: String, id: String) => String,
+  generateTypeName: (type: String) => String
 })
 ```
 
@@ -132,15 +132,15 @@ The following options are provided as an object.
 
 The following outputs are provided as an object.
 
-* `createNodeFactory: (type: String, middleware?: Node => Node)`
+* `createNodeFactory: (type: String, middleware?: Node => Node) => (obj: Object, overrides?: Object)`
 
   Jump to documentation: [`createNodeFactory`](#createNodeFactory)
 
-* `generateNodeId: (type: String, id: String)`
+* `generateNodeId: (type: String, id: String) => String`
 
   Jump to documentation: [`generateNodeId`](#generateNodeId)
 
-* `generateTypeName: (type: String)`
+* `generateTypeName: (type: String) => String`
 
   Jump to documentation: [`generateTypeName`](#generateTypeName)
 

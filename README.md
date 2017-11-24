@@ -3,6 +3,9 @@
 Gatsby node helper functions to aid node creation. To be used when creating
 [Gatsby source plugins][gatsby-source-plugins].
 
+**Note**: The following documentation is incomplete and will be written at a
+later time.
+
 ## Status
 
 [![npm version](https://badge.fury.io/js/gatsby-node-helpers.svg)](http://badge.fury.io/js/gatsby-node-helpers)

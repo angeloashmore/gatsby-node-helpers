@@ -64,7 +64,7 @@ export const ProductNode = createNodeFactory(`Product`)
 Gatsby's `createNode` action creator.
 
 It handles setting up Gatsby's internal fields, including the content digest
-and node types.
+and node type.
 
 ```js
 // gatsby-node.js

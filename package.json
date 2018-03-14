@@ -17,7 +17,8 @@
     "url": "https://github.com/angeloashmore/gatsby-node-helpers.git"
   },
   "keywords": [
-    "gatsby"
+    "gatsby",
+    "gatsby-plugin"
   ],
   "author": "Angelo Ashmore",
   "license": "MIT",

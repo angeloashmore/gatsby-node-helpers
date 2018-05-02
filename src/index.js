@@ -68,7 +68,7 @@ const createNodeHelpers = (options = {}) => {
 
   // Generates a node ID from a given type and node ID.
   const generateNodeId = (type, id) =>
-    `${typePrefix}__${upperFirst(type)}__${id}`
+    `${typePrefix}__${upperFirst(camelCase(type))}__${id}`
 
   // Generates a node type name from a given type.
   const generateTypeName = type =>

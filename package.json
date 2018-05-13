@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "json-stringify-safe": "^5.0.1",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "p-is-promise": "^1.1.0"
   }
 }

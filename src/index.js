@@ -8,6 +8,7 @@ import {
   lowerFirst,
   upperFirst,
 } from 'lodash/fp'
+import isPromise from 'p-is-promise'
 import stringify from 'json-stringify-safe'
 
 // Default parent ID for all nodes.
@@ -115,6 +116,14 @@ const createNodeHelpers = (options = {}) => {
     }
 
     node = middleware(node)
+
+    if (isPromise(node))
+      return node.then(resolvedNode =>
+        withDigest({
+          ...resolvedNode,
+          ...overrides,
+        }),
+      )
 
     return withDigest({
       ...node,

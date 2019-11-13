@@ -1,0 +1,13 @@
+{
+  "include": ["src/**/*.js"],
+  "exclude": ["**/*.test.js"],
+  "compilerOptions": {
+    "outDir": "dist",
+    "allowJs": true,
+    // "checkJs": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "strict": true,
+    "esModuleInterop": true
+  }
+}

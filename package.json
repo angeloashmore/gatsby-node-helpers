@@ -3,10 +3,12 @@
   "version": "0.3.0",
   "description": "Gatsby node helper functions to aid node creation.",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "babel src --out-dir dist --ignore *.test.js",
+    "declaration": "tsc",
     "format": "prettier --write 'src/**/*.js' 'README.md'",
-    "prepublish": "npm run build",
+    "prepublish": "npm run build && npm run declaration",
     "test": "jest",
     "test:watch": "npm run test -- --watch",
     "watch": "npm run build -- --watch"
@@ -23,13 +25,17 @@
   "author": "Angelo Ashmore",
   "license": "MIT",
   "devDependencies": {
+    "@types/json-stringify-safe": "^5.0.0",
+    "@types/lodash": "^4.14.146",
+    "@types/node": "^12.12.7",
     "babel-cli": "^6.26.0",
     "babel-plugin-rewire": "^1.1.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
     "babel-plugin-transform-export-extensions": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "jest": "^21.2.1",
-    "prettier": "^1.8.2"
+    "prettier": "^1.8.2",
+    "typescript": "^3.7.2"
   },
   "dependencies": {
     "json-stringify-safe": "^5.0.1",

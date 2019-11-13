@@ -33,7 +33,10 @@ const digest = str =>
 const withDigest = obj =>
   assoc([`internal`, `contentDigest`], digest(stringify(obj)), obj)
 
-// Returns node helpers for creating new nodes.
+/**
+ * Returns node helpers for creating new nodes.
+ * @param {{sourceId?: string, typePrefix?: string, conflictFieldPrefix?: string}} [options={}]
+ */
 const createNodeHelpers = (options = {}) => {
   if (!isPlainObject(options))
     throw new Error(
@@ -67,11 +70,18 @@ const createNodeHelpers = (options = {}) => {
     conflictFieldPrefix = lowerFirst(typePrefix),
   } = options
 
-  // Generates a node ID from a given type and node ID.
+  /**
+   * Generates a node ID from a given type and node ID.
+   * @param {string} type
+   * @param {string} id
+   */
   const generateNodeId = (type, id) =>
     `${typePrefix}__${upperFirst(camelCase(type))}__${id}`
 
-  // Generates a node type name from a given type.
+  /**
+   * Generates a node type name from a given type.
+   * @param {string} type
+   */
   const generateTypeName = type =>
     upperFirst(camelCase(`${typePrefix} ${type}`))
 
@@ -87,7 +97,12 @@ const createNodeHelpers = (options = {}) => {
     return obj
   }
 
-  // Creates a node factory with a given type and middleware processor.
+  /**
+   * Creates a node factory with a given type and middleware processor.
+   * @param {string} type
+   * @param {(node: Object) => Object | Promise<Object>} [middleware]
+   * @returns {(obj: Object, overrides?: Object) => Object | Promise<Object>}
+   */
   const createNodeFactory = (type, middleware = identity) => (
     obj,
     overrides = {},

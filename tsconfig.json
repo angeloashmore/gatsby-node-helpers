@@ -4,7 +4,6 @@
   "compilerOptions": {
     "outDir": "dist",
     "allowJs": true,
-    // "checkJs": true,
     "declaration": true,
     "emitDeclarationOnly": true,
     "strict": true,

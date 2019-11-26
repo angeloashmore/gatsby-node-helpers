@@ -35,7 +35,7 @@ const withDigest = obj =>
 
 /**
  * Returns node helpers for creating new nodes.
- * @param {{sourceId?: string, typePrefix?: string, conflictFieldPrefix?: string}} [options={}]
+ * @param {{sourceId?: string, typePrefix: string, conflictFieldPrefix?: string}} options
  */
 const createNodeHelpers = (options = {}) => {
   if (!isPlainObject(options))

@@ -1,6 +1,6 @@
 import { createContentDigest } from 'gatsby-core-utils'
 
-import { createNodeHelpers } from './index'
+import { createNodeHelpers } from '../src'
 
 const createNodeId = (input: string): string => `createNodeId(${input})`
 

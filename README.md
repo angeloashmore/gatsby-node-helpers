@@ -1,289 +1,117 @@
 # gatsby-node-helpers
 
 Gatsby node helper functions to aid node creation. To be used when creating
-[Gatsby source plugins][gatsby-source-plugins].
+[Gatsby source plugins](https://www.gatsbyjs.org/docs/create-source-plugin/).
 
-**Note**: The following documentation is incomplete and will be written at a
-later time.
+- Automatically adds Gatsby's required node fields such as `contentDigest`
+- Namespaces fields conflicting with Gatsby's reserved fields
+- Creates portable functions for generating compliant type names and IDs
 
 ## Status
 
-[![npm version](https://badge.fury.io/js/gatsby-node-helpers.svg)](http://badge.fury.io/js/gatsby-node-helpers)
-[![Build Status](https://secure.travis-ci.org/angeloashmore/gatsby-node-helpers.svg?branch=master)](http://travis-ci.org/angeloashmore/gatsby-node-helpers?branch=master)
+[![npm version](https://img.shields.io/npm/v/gatsby-node-helpers?style=flat-square)](https://www.npmjs.com/package/gatsby-node-helpers)
+[![Build Status](https://img.shields.io/github/workflow/status/angeloashmore/gatsby-node-helpers/CI?style=flat-square)](https://github.com/angeloashmore/gatsby-node-helpers/actions?query=workflow%3ACI)
 
 ## Installation
 
-```sh
+```
 npm install --save gatsby-node-helpers
 ```
 
 ## Quick Guide
 
-### Import
+Import the named module:
 
-Import the default module:
-
-```js
-import createNodeHelpers from 'gatsby-node-helpers'
+```typescript
+import { createNodeHelpers } from 'gatsby-node-helpers'
 ```
 
-### Create node helpers
+Then call `createNodeHelpers` with options. You will need to pass functions
+available in Gatsby's Node APIs, such as `sourceNodes` and
+`createSchemaCustomization`.
 
-Call `createNodeHelpers` with options.
+The following example shows usage in `gatsby-node.js`'s `sourceNodes` API, but
+it can be used elsewhere provided the appropriate helper functions are
+available.
 
-```js
-import createNodeHelpers from 'gatsby-node-helpers'
+```typescript
+// gatsby-node.ts
 
-const {
-  createNodeFactory,
-  generateNodeId,
-  generateTypeName,
-} = createNodeHelpers({
-  typePrefix: `Shopify`,
-})
+import * as gatsby from 'gatsby'
+import { createNodeHelpers } from 'gatsby-node-helpers'
+
+export const sourceNodes: gatsby.GatsbyNode['sourceNodes'] = async (
+  gatsbyArgs: gatsby.SourceNodesArgs,
+  pluginOptions: gatsby.PluginOptions,
+) => {
+  const { createNodeId, createContentDigest } = gatsbyArgs
+
+  const nodeHelpers = createNodeHelpers({
+    typePrefix: 'Shopify',
+    createNodeId,
+    createContentDigest,
+  })
+}
 ```
 
-### Create a node factory
+The result of `createNodeHelpers` includes a factory function named
+`createNodeFactory` that should be used to prepare an object just before calling
+Gatsby's `createNode`.
 
-Call `createNodeFactory` with a type name.
+The created function will automatically assign Gatsby's required fields, like
+`internal` and `contentDigest`, while renaming any conflicting fields.
 
-```js
-import createNodeHelpers from 'gatsby-node-helpers'
-
-const {
-  createNodeFactory,
-  generateNodeId,
-  generateTypeName,
-} = createNodeHelpers({
-  typePrefix: `Shopify`,
+```typescript
+const nodeHelpers = createNodeHelpers({
+  typePrefix: 'Shopify',
+  createNodeId: gatsbyArgs.createNodeId,
+  createContentDigest: gatsbyArgs.createContentDigest,
 })
 
-const PRODUCT_TYPE = `Product`
-const PRODUCT_VARIANT_TYPE = `ProductVariant`
-
-export const ProductNode = createNodeFactory(PRODUCT_TYPE, node => {
-  if (node.variants) {
-    const variants = node.variants.edges.map(edge => edge.node)
-
-    // Set additional fields
-    const variantPrices = variants
-      .map(variant => Number.parseFloat(variant.price))
-      .filter(Boolean)
-    node.minPrice = Math.min(...variantPrices) || 0
-    node.maxPrice = Math.max(...variantPrices) || 0
-
-    // Set children
-    node.children = variants.map(variant =>
-      generateNodeId(PRODUCT_VARIANT_TYPE, variant.id),
-    )
-
-    // Remove unnecessary fields
-    delete node.variants
-  }
-
-  return node
-})
-
-export const ProductVariantNode = createNodeFactory(PRODUCT_VARIANT_TYPE)
+const ProductNode = nodeHelpers.createNodeFactory('Product')
+const ProductVariantNode = nodeHelpers.createNodeFactory('ProductVariant')
 ```
 
-### Use the node factory in your `gatsby-node.js`
+In the above example, we can now pass Product objects to `ProductNode` to
+prepare the object for Gatsby's `createNode`.
 
-`ProductNode` accepts an object and returns a new object to be passed to
-Gatsby's `createNode` action creator.
+```typescript
+// gatsby-node.ts
 
-It handles setting up Gatsby's internal fields, including the content digest and
-node type.
+export const sourceNodes: gatsby.GatsbyNode['sourceNodes'] = async (
+  gatsbyArgs: gatsby.SourceNodesArgs,
+  pluginOptions: gatsby.PluginOptions,
+) => {
+  const { actions, createNodeId, createContentDigest } = gatsbyArgs
+  const { createNodes } = actions
 
-```js
-// gatsby-node.js
+  const nodeHelpers = createNodeHelpers({
+    typePrefix: 'Shopify',
+    createNodeId,
+    createContentDigest,
+  })
 
-import { ProductNode, ProductVariantNode } from './nodes'
-import { getAllProducts } from './api'
+  const ProductNode = nodeHelpers.createNodeFactory('Product')
+  const ProductVariantNode = nodeHelpers.createNodeFactory('ProductVariant')
 
-exports.sourceNodes = async ({ boundActionCreators }) => {
-  const { createNode } = boundActionCreators
-
+  // `getAllProducts` is an API function that returns all Shopify products.
   const products = await getAllProducts()
 
-  products.forEach(product => {
-    const productNode = ProductNode(product)
-    createNode(productNode)
+  for (const product of products) {
+    const node = ProductNode(product)
 
-    product.variants.edges.forEach(edge => {
-      const variant = edge.node
-      const productVariantNode = ProductVariantNode(variant, {
-        parent: productNode.id,
-      })
-      createNode(productVariantNode)
-    })
-  })
+    // `node` now contains all the fields required by `createNode`.
+
+    createNode(node)
+  }
 }
 ```
 
 ## API
 
-### `createNodeHelpers`
+All functions and types are documented in the source files using
+[TSDoc](https://github.com/microsoft/tsdoc) to provide documentation directly in
+your editor.
 
-**Default export** of the package.
-
-```js
-({
-  sourceId?: String,
-  typePrefix: String,
-  conflictFieldPrefix?: String
-}) => ({
-  createNodeFactory: (type: String, middleware?: Node => Node) => (obj: Object, overrides?: Object),
-  generateNodeId: (type: String, id: String) => String,
-  generateTypeName: (type: String) => String
-})
-```
-
-#### Inputs
-
-The following options are provided as an object.
-
-##### `sourceId?: String` - Optional (default: `__SOURCE__`)
-
-Default source parent ID. If not defined, the node is set as a top-level node.
-
-##### `typePrefix: String` - **Required**
-
-Prefix for all nodes. Used a namespace for node type names and IDs. Must be
-PascalCase.
-
-##### `conflictFieldPrefix?: String` - Optional (default: camelcased `typePrefix`)
-
-Prefix for all fields conflicting with Gatsby's internal fields:
-
-* `id`
-* `children`
-* `parent`
-* `fields`
-* `internal`
-
-#### Outputs
-
-The following outputs are provided as an object.
-
-##### `createNodeFactory: (type: String, middleware?: Node => Node) => (obj: Object, overrides?: Object)`
-
-Jump to documentation: [`createNodeFactory`](#createnodefactory)
-
-##### `generateNodeId: (type: String, id: String) => String`
-
-Jump to documentation: [`generateNodeId`](#generatenodeid)
-
-##### `generateTypeName: (type: String) => String`
-
-Jump to documentation: [`generateTypeName`](#generatetypename)
-
----
-
-The following functions are generated by `createNodeHelpers`.
-
-### `createNodeFactory`
-
-```js
-;(type: String, middleware?: Node => Node) => (
-  obj: Object,
-  overrides?: Object,
-) => Node
-```
-
-#### Inputs
-
-##### `type: String` - **Required**
-
-The type of the node the resulting function will create.
-
-##### `middleware?: Node => Node` - Optional (default: identity function)
-
-Allows for modifying the node beyond the default Gatsby fields. This function
-recieves the Node object and must return the Node object, with modifications if
-necessary.
-
-The middleware function is called at the following point:
-
-1. Clone the input object and add Gatsby internal fields.
-2. **HERE =>**: Run Node through middleware, modifiying fields as necessary.
-3. Merge node with overrides provided to `createNodeFactory`'s resulting
-   function.
-
-Typical uses of the middleware function is setting up the `children` field,
-adding new fields based on the object, and removing unecessary fields.
-
-#### Outputs
-
-##### `(obj: Object, overrides?: Object) => Node`
-
-Factory function to create a Gatsby `createNode` compatible object.
-
-It takes in an object, sets it up for Gatsby using the previously defined
-options (see Inputs above), merges any overrides provided, and returns an
-object.
-
-By default, the input object is kept intact, with the following exceptions:
-
-| Field                    | Description                                                               |
-| ------------------------ | ------------------------------------------------------------------------- |
-| `id`                     | A generated string containing `typePrefix`, `type`, and the original `id` |
-| `parent`                 | `sourceId` set in `createNodeHelpers` (`__SOURCE__` by default)           |
-| `children`               | `[]` by default                                                           |
-| `internal.type`          | A generated string containing `typePrefix` and `type`                     |
-| `internal.contentDigest` | MD5 hash of the object including the above added fields                   |
-
-The `overrides` parameter allows for a final chance to override any node field.
-The object is merged directly with no modifications.
-
-### `generateNodeId`
-
-```js
-;(type: String, id: String) => String
-```
-
-Function that takes in a node type and node ID and returns a formatted string.
-It is used internally to create a node's ID.
-
-Because it is used internally to create a node's ID, it can be useful when
-setting `obj.parent` and `obj.children` in a middleware function or overrides
-object. The result will always be the same as long as the same type and ID are
-provided.
-
-#### Inputs
-
-##### `type: String` - **Required**
-
-Type of the node.
-
-##### `id: String` - **Required**
-
-ID of the node. Must be unique scoped to the type.
-
-#### Outputs
-
-##### `String`
-
-A formatted string containing `typePrefix`, `type` and `id`. Used internally to
-consistently generate node IDs.
-
-### `generateTypeName`
-
-```js
-(type: String): String
-```
-
-#### Inputs
-
-##### `type: String` - **Required**
-
-Type of the node.
-
-#### Outputs
-
-##### `String`
-
-A formatted string containing `typePrefix` and `type`. Used internally to
-consistently generate node type names.
-
-[gatsby-source-plugins]: https://www.gatsbyjs.org/docs/create-source-plugin/
+If you editor does not have TSDoc integration, you can read all documentation by
+viewing the source files.

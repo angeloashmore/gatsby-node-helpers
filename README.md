@@ -3,6 +3,10 @@
 Gatsby node helper functions to aid node creation. To be used when creating
 [Gatsby source plugins](https://www.gatsbyjs.org/docs/create-source-plugin/).
 
+- Automatically adds Gatsby's required node fields such as `contentDigest`
+- Namespaces fields conflicting with Gatsby's reserved fields
+- Creates portable functions for generating compliant type names and IDs
+
 ## Status
 
 [![npm version](https://img.shields.io/npm/v/gatsby-node-helpers?style=flat-square)](https://www.npmjs.com/package/gatsby-node-helpers)
@@ -36,9 +40,7 @@ available.
 import * as gatsby from 'gatsby'
 import { createNodeHelpers } from 'gatsby-node-helpers'
 
-export const sourceNodes: NonNullable<
-  gatsby.GatsbyNode['sourceNodes']
-> = async (
+export const sourceNodes: gatsby.GatsbyNode['sourceNodes'] = async (
   gatsbyArgs: gatsby.SourceNodesArgs,
   pluginOptions: gatsby.PluginOptions,
 ) => {
@@ -76,9 +78,7 @@ prepare the object for Gatsby's `createNode`.
 ```typescript
 // gatsby-node.ts
 
-export const sourceNodes: NonNullable<
-  gatsby.GatsbyNode['sourceNodes']
-> = async (
+export const sourceNodes: gatsby.GatsbyNode['sourceNodes'] = async (
   gatsbyArgs: gatsby.SourceNodesArgs,
   pluginOptions: gatsby.PluginOptions,
 ) => {
@@ -99,6 +99,7 @@ export const sourceNodes: NonNullable<
 
   for (const product of products) {
     const node = ProductNode(product)
+
     createNode(node)
   }
 }

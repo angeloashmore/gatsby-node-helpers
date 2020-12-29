@@ -100,6 +100,8 @@ export const sourceNodes: gatsby.GatsbyNode['sourceNodes'] = async (
   for (const product of products) {
     const node = ProductNode(product)
 
+    // `node` now contains all the fields required by `createNode`.
+
     createNode(node)
   }
 }

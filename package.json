@@ -1,6 +1,7 @@
 {
   "name": "gatsby-node-helpers",
   "version": "1.0.0",
+  "description": "Gatsby node helper functions to aid node creation.",
   "source": "./src/index.ts",
   "main": "./dist/gatsby-node-helpers.js",
   "exports": "./dist/gatsby-node-helpers.modern.js",
@@ -19,6 +20,17 @@
     "prepare": "yarn build",
     "release": "standard-version"
   },
+  "homepage": "https://github.com/angeloashmore/gatsby-node-helpers",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/angeloashmore/gatsby-node-helpers.git"
+  },
+  "keywords": [
+    "gatsby",
+    "gatsby-plugin"
+  ],
+  "author": "Angelo Ashmore",
+  "license": "MIT",
   "dependencies": {
     "camel-case": "^4.1.2",
     "pascal-case": "^3.1.2"

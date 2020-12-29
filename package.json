@@ -63,6 +63,12 @@
     "proseWrap": "always",
     "printWidth": 80
   },
+  "jest": {
+    "preset": "ts-jest",
+    "modulePathIgnorePatterns": [
+      "/dist/"
+    ]
+  },
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"

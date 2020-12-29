@@ -1,6 +1,6 @@
 {
   "name": "gatsby-node-helpers",
-  "version": "1.0.0-next.1",
+  "version": "1.0.0",
   "source": "./src/index.ts",
   "main": "./dist/gatsby-node-helpers.js",
   "exports": "./dist/gatsby-node-helpers.modern.js",

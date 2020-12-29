@@ -78,6 +78,9 @@ prepare the object for Gatsby's `createNode`.
 ```typescript
 // gatsby-node.ts
 
+import * as gatsby from 'gatsby'
+import { createNodeHelpers } from 'gatsby-node-helpers'
+
 export const sourceNodes: gatsby.GatsbyNode['sourceNodes'] = async (
   gatsbyArgs: gatsby.SourceNodesArgs,
   pluginOptions: gatsby.PluginOptions,

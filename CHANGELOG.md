@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.3](https://github.com/angeloashmore/gatsby-node-helpers/compare/v1.0.2...v1.0.3) (2021-01-06)
+
+
+### Bug Fixes
+
+* remove exports from package.json ([a05b183](https://github.com/angeloashmore/gatsby-node-helpers/commit/a05b18303321e654ae76f811cab3afd48235083a))
+
 ### [1.0.2](https://github.com/angeloashmore/gatsby-node-helpers/compare/v1.0.1...v1.0.2) (2020-12-29)
 
 

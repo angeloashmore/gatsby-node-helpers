@@ -4,7 +4,6 @@
   "description": "Gatsby node helper functions to aid node creation.",
   "source": "./src/index.ts",
   "main": "./dist/gatsby-node-helpers.js",
-  "exports": "./dist/gatsby-node-helpers.modern.js",
   "module": "./dist/gatsby-node-helpers.module.js",
   "types": "./dist/index.d.ts",
   "files": [

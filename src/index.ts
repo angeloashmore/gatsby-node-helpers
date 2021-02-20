@@ -52,11 +52,17 @@ interface CreateNodeHelpersParams {
 }
 
 /**
- * A record that can be globally identified using a combination of `id` and
- * `type` fields.
+ * A value that can be converted to a string using `toString()`.
+ */
+export interface Stringable {
+  toString(): string
+}
+
+/**
+ * A record that can be globally identified using its `id` field.
  */
 export interface IdentifiableRecord {
-  id: string
+  id: Stringable
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any
 }
@@ -144,7 +150,7 @@ export const createNodeHelpers = ({
   ): gatsby.NodeInput => {
     const res = {
       ...node,
-      id: createNodeId(...nameParts, node.id),
+      id: createNodeId(...nameParts, node.id.toString()),
       internal: {
         type: createTypeName(...nameParts),
         contentDigest: gatsbyCreateContentDigest(node),

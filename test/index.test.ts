@@ -100,6 +100,16 @@ describe('createNodeFactory', () => {
     expect(nodeInput.id).toBe(`createNodeId(typePrefix TypeName ${node.id})`)
   })
 
+  test('accepts non-string node IDs', () => {
+    const modifiedNode = { ...node, id: [1, 2, 3] }
+    const modifiedNodeInput = fn(modifiedNode)
+
+    expect(modifiedNodeInput.id).toBe(
+      `createNodeId(typePrefix TypeName ${modifiedNode.id})`,
+    )
+    expect(modifiedNodeInput.fieldPrefixId).toBe(modifiedNode.id)
+  })
+
   test('adds internal field with required Gatsby fields', () => {
     expect(nodeInput.internal).toEqual({
       type: 'TypePrefixTypeName',

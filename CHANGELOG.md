@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/angeloashmore/gatsby-node-helpers/compare/v1.0.3...v1.1.0) (2021-02-21)
+
+
+### Features
+
+* accept non-string node IDs ([c481230](https://github.com/angeloashmore/gatsby-node-helpers/commit/c481230229c268f41ab4f1d846d78b42ab2d3c01))
+
 ### [1.0.3](https://github.com/angeloashmore/gatsby-node-helpers/compare/v1.0.2...v1.0.3) (2021-01-06)
 
 

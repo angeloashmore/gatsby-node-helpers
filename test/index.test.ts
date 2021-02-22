@@ -54,6 +54,13 @@ describe('createTypeName', () => {
     expect(helpers.createTypeName('Foo_Bar')).toBe('TypePrefixFooBar')
     expect(helpers.createTypeName('Foo Bar')).toBe('TypePrefixFooBar')
   })
+
+  test('supports array input', () => {
+    const config = createConfig()
+    const helpers = createNodeHelpers(config)
+
+    expect(helpers.createTypeName(['foo', 'bar'])).toBe('TypePrefixFooBar')
+  })
 })
 
 describe('createFieldName', () => {
@@ -73,6 +80,13 @@ describe('createFieldName', () => {
     expect(helpers.createFieldName('Foo_Bar')).toBe('fieldPrefixFooBar')
     expect(helpers.createFieldName('Foo Bar')).toBe('fieldPrefixFooBar')
   })
+
+  test('supports array input', () => {
+    const config = createConfig()
+    const helpers = createNodeHelpers(config)
+
+    expect(helpers.createFieldName(['foo', 'bar'])).toBe('fieldPrefixFooBar')
+  })
 })
 
 describe('createNodeId', () => {
@@ -87,6 +101,15 @@ describe('createNodeId', () => {
 
     expect(helpers1.createNodeId('foo')).toBe('createNodeId(type1 foo)')
     expect(helpers2.createNodeId('foo')).toBe('createNodeId(type2 foo)')
+  })
+
+  test('supports array input', () => {
+    const config = createConfig()
+    const helpers = createNodeHelpers(config)
+
+    expect(helpers.createNodeId(['foo', 'bar'])).toBe(
+      'createNodeId(typePrefix foo bar)',
+    )
   })
 })
 
@@ -110,6 +133,15 @@ describe('createNodeFactory', () => {
     expect(modifiedNodeInput.fieldPrefixId).toBe(modifiedNode.id)
   })
 
+  test('identifying an id as globally unique does not namespace id', () => {
+    const modifiedFn = helpers.createNodeFactory('TypeName', {
+      idIsGloballyUnique: true,
+    })
+    const modifiedNodeInput = modifiedFn(node)
+
+    expect(modifiedNodeInput.id).toBe(`createNodeId(${node.id})`)
+  })
+
   test('adds internal field with required Gatsby fields', () => {
     expect(nodeInput.internal).toEqual({
       type: 'TypePrefixTypeName',
@@ -123,5 +155,12 @@ describe('createNodeFactory', () => {
     expect(nodeInput.fieldPrefixFields).toBe(node.fields)
     expect(nodeInput.fieldPrefixParent).toBe(node.parent)
     expect(nodeInput.fieldPrefixChildren).toBe(node.children)
+  })
+
+  test('supports array input', () => {
+    const modifiedFn = helpers.createNodeFactory(['foo', 'bar'])
+    const modifiedNodeInput = modifiedFn(node)
+
+    expect(modifiedNodeInput.internal.type).toBe('TypePrefixFooBar')
   })
 })

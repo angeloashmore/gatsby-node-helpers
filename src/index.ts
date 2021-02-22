@@ -27,6 +27,18 @@ const camelCase = (...parts: (string | null | undefined)[]): string =>
   })
 
 /**
+ * Casts a value to an array. If the input is an array, the input is returned as
+ * is. Otherwise, the input is returned as a single element array with the input
+ * as its only value.
+ *
+ * @param input Input that will be casted to an array.
+ *
+ * @return `input` that is guaranteed to be an array.
+ */
+const castArray = <T>(input: T | T[]): T[] =>
+  Array.isArray(input) ? input : [input]
+
+/**
  * Reserved fields for Gatsby nodes.
  */
 const RESERVED_GATSBY_NODE_FIELDS = [
@@ -81,7 +93,7 @@ export interface NodeHelpers {
    *
    * @return Namespaced type name.
    */
-  createTypeName: (...parts: string[]) => string
+  createTypeName: (parts: string | string[]) => string
 
   /**
    * Creates a namespaced field name in camel case. Nodes created using a
@@ -94,7 +106,7 @@ export interface NodeHelpers {
    *
    * @return Namespaced field name.
    */
-  createFieldName: (...parts: string[]) => string
+  createFieldName: (parts: string | string[]) => string
 
   /**
    * Creates a deterministic node ID based on the `typePrefix` option provided
@@ -106,23 +118,43 @@ export interface NodeHelpers {
    *
    * @return Node ID based on the provided `parts`.
    */
-  createNodeId: (...parts: string[]) => string
+  createNodeId: (parts: string | string[]) => string
 
   /**
    * Creates a function that will convert an identifiable record (one that has
-   * an `id` and `type` field) to a valid input for Gatsby's `createNode`
-   * action.
+   * an `id` field) to a valid input for Gatsby's `createNode` action.
    *
    * @param nameParts Parts of the type name for the resulting factory. All
    * records called with the resulting function will have a type name based on
    * this parameter.
    *
+   * @param options Options to control the resulting function's output.
+   *
    * @return A function that converts an identifiable record to a valid input
    * for Gatsby's `createNode` action.
    */
   createNodeFactory: (
-    ...nameParts: string[]
+    nameParts: string | string[],
+    options?: CreateNodeFactoryOptions,
   ) => (node: IdentifiableRecord) => gatsby.NodeInput
+}
+
+/**
+ * Options for a node factory.
+ */
+type CreateNodeFactoryOptions = {
+  /**
+   * Determines if the node's `id` field is globally unique. Globally in this
+   * context means across all nodes in your application or package.
+   *
+   * If `true`, the ID will be passed directly to Gatsby's `createNodeId`
+   * function.
+   *
+   * If `false`, the ID will be namespaced with the node's type.
+   *
+   * @defaultValue `false`
+   */
+  idIsGloballyUnique?: boolean
 }
 
 /**
@@ -134,25 +166,30 @@ export const createNodeHelpers = ({
   createNodeId: gatsbyCreateNodeId,
   createContentDigest: gatsbyCreateContentDigest,
 }: CreateNodeHelpersParams): NodeHelpers => {
-  const createTypeName = (...parts: string[]): string =>
-    pascalCase(typePrefix, ...parts)
+  const createTypeName = (nameParts: string | string[]): string =>
+    pascalCase(typePrefix, ...castArray(nameParts))
 
-  const createFieldName = (...parts: string[]): string =>
-    camelCase(fieldPrefix, ...parts)
+  const createFieldName = (nameParts: string | string[]): string =>
+    camelCase(fieldPrefix, ...castArray(nameParts))
 
-  const createNodeId = (...parts: string[]): string =>
+  const createNodeId = (nameParts: string | string[]): string =>
     gatsbyCreateNodeId(
-      [typePrefix, ...parts].filter((p) => p != null).join(' '),
+      [typePrefix, ...castArray(nameParts)].filter((p) => p != null).join(' '),
     )
 
-  const createNodeFactory = (...nameParts: string[]) => (
-    node: IdentifiableRecord,
-  ): gatsby.NodeInput => {
+  const createNodeFactory = (
+    nameParts: string | string[],
+    { idIsGloballyUnique = false }: CreateNodeFactoryOptions = {},
+  ) => (node: IdentifiableRecord): gatsby.NodeInput => {
+    const id = idIsGloballyUnique
+      ? gatsbyCreateNodeId(node.id.toString())
+      : createNodeId([...castArray(nameParts), node.id.toString()])
+
     const res = {
       ...node,
-      id: createNodeId(...nameParts, node.id.toString()),
+      id,
       internal: {
-        type: createTypeName(...nameParts),
+        type: createTypeName(nameParts),
         contentDigest: gatsbyCreateContentDigest(node),
       },
     } as gatsby.NodeInput

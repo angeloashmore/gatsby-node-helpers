@@ -1,6 +1,6 @@
 {
   "name": "gatsby-node-helpers",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Gatsby node helper functions to aid node creation.",
   "source": "./src/index.ts",
   "main": "./dist/gatsby-node-helpers.js",

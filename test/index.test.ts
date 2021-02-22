@@ -139,7 +139,7 @@ describe('createNodeFactory', () => {
     })
     const modifiedNodeInput = modifiedFn(node)
 
-    expect(modifiedNodeInput.id).toBe(`createNodeId(${node.id})`)
+    expect(modifiedNodeInput.id).toBe(`createNodeId(typePrefix ${node.id})`)
   })
 
   test('adds internal field with required Gatsby fields', () => {

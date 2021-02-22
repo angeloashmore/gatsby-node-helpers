@@ -144,13 +144,14 @@ export interface NodeHelpers {
  */
 type CreateNodeFactoryOptions = {
   /**
-   * Determines if the node's `id` field is globally unique. Globally in this
-   * context means across all nodes in your application or package.
+   * Determines if the node's `id` field is unique within all nodes created with
+   * this collection of node helpers.
    *
-   * If `true`, the ID will be passed directly to Gatsby's `createNodeId`
-   * function.
+   * If `false`, the ID will be namespaced with the node's type and the
+   * `typePrefix` value.
    *
-   * If `false`, the ID will be namespaced with the node's type.
+   * If `true`, the ID will not be namespaced with the node's type, but will still
+   * be namespaced with the `typePrefix` value.
    *
    * @defaultValue `false`
    */
@@ -182,7 +183,7 @@ export const createNodeHelpers = ({
     { idIsGloballyUnique = false }: CreateNodeFactoryOptions = {},
   ) => (node: IdentifiableRecord): gatsby.NodeInput => {
     const id = idIsGloballyUnique
-      ? gatsbyCreateNodeId(node.id.toString())
+      ? createNodeId(node.id.toString())
       : createNodeId([...castArray(nameParts), node.id.toString()])
 
     const res = {
